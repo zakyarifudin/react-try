@@ -15,17 +15,24 @@ class Home extends Component {
 
         }
         this.handleChange = this.handleChange.bind(this);
+        //this.handletest = this.handletest.bind(this);
     }
 
 
-    handleChange(e) {
-        console.log(this.refs.fruit)
+    handleChange(selectedOption) {
+        console.log(selectedOption)
         let fruit = this.refs.fruit.state.value;
         if(fruit!=null){
+            console.log("test")
             this.setState({ fruitSelected: this.refs.fruit.state.value.label});
         }
         
         
+        
+    }
+
+    handletest(param,e){
+        alert(param);
     }
 
 
@@ -55,12 +62,24 @@ class Home extends Component {
                     //value={fruits.} 
                     options={fruits} 
                     placeholder={'Pilih Buah buahan'}
-                    onChange={this.handleChange}
+                    onInputChange={this.handleChange}
                 />
-
+                <Item coba="jadi" onClick={this.handletest.bind(this,"coba")} />
+                <Item coba="jadi 3" onClick={this.handletest.bind(this,"coba 2")} />
+                <Item coba="jadi 5" onClick={this.handletest.bind(this,"coba 5")} />
             </div>
         );
     }  
 }
+
+class Item extends Component{
+    render(){
+        return(
+            <div className="test" onClick={this.props.onClick}>
+                {this.props.coba}
+            </div>
+        )
+    }
+} 
 
 export default Home;
