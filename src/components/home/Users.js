@@ -2,27 +2,53 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import $ from 'jquery';
+import {getUsers} from './userAction';
+import {connect} from 'react-redux';
+import {postNoAuth, putNoAuth, destroyNoAuth, getNoAuth} from '../../lib/helper'; 
 
 class Users extends Component {
     constructor(props){
         super(props);
         this.state = {
-            users : [],
             newUser : {},
             editUser : {},
         };
         this.handleSubmit      = this.handleSubmit.bind(this);
         this.handleInputNew    = this.handleInputNew.bind(this);
-        this.getUsers          = this.getUsers.bind(this);
-        //this.handleToggle      = this.handleToggle.bind(this);
+        this.handleInputEdit   = this.handleInputEdit.bind(this);
     }
     
-    getUsers(){
-        axios
-            .get('http://127.0.0.1:3333/api/user')
+    updateUser(id, e){
+        e.preventDefault();
+
+        console.log(id);
+
+        putNoAuth('user/'+id, this.state.editUser)
             .then((response) =>{
-                this.setState({users : response.data.result})
-                console.log(this.state.users)
+                if(response.status == 'success'){
+                    getUsers();
+                    this.setState({
+                        editUser:{
+                            id:'',
+                            email:'',
+                            username:''
+                        }
+                    })
+                    $('#exampleModal').modal('toggle')
+                    //console.log(this.state.editUser)
+                    Swal(
+                        'Yeah!',
+                        'User has been updated.',
+                        'success'
+                      )
+                }
+                else{
+                    Swal(
+                        'OMG!',
+                        'Something Wrong!',
+                        'warning'
+                      )
+                }
             })
             .catch((e) => {
                 console.log(e)
@@ -30,17 +56,16 @@ class Users extends Component {
     }
 
     componentDidMount(){
-        this.getUsers();
+        getUsers();
     }
 
     handleSubmit(e){
         e.preventDefault();
 
-        axios
-            .post('http://127.0.0.1:3333/api/user', this.state.newUser)
+        postNoAuth('user', this.state.newUser)
             .then((response) =>{
-                if(response.data.status == 'success'){
-                    this.getUsers();
+                if(response.status == 'success'){
+                    getUsers();
                     this.setState({
                         newUser:{
                             email:'',
@@ -48,7 +73,19 @@ class Users extends Component {
                             password:''   
                         }
                     })
-                    console.log(this.state.newUser)
+
+                    Swal(
+                        'Yeah',
+                        'User has been added.',
+                        'success'
+                      )
+                }
+                else{
+                    Swal(
+                        'OMG!',
+                        'Something Wrong!',
+                        'warning'
+                      )
                 }
             })
             .catch((e) => {
@@ -73,7 +110,7 @@ class Users extends Component {
         const value  = e.target.value;
  
         this.setState({
-            newUser :{
+            editUser :{
                 ...this.state.editUser,
                 [name] : value
             }
@@ -81,19 +118,18 @@ class Users extends Component {
      }
 
     handleEditButton(id){
-        this.id = id;
-
-        $('#exampleModal').modal('toggle')
-
-        axios
-            .get('http://127.0.0.1:3333/api/user/'+ this.id)
+        
+        getNoAuth('user/'+ id)
             .then((response) =>{
-                this.setState({editUser : response.data.result})
-                console.log(this.state.user)
+                console.log(response);
+                this.setState({editUser : response.result})
+                //console.log(this.state.editUser)
             })
             .catch((e) => {
                 console.log(e)
             });
+
+        $('#exampleModal').modal('toggle')
 
     }
     
@@ -111,13 +147,12 @@ class Users extends Component {
             confirmButtonText: 'Yes, delete it!'
           }).then((result) => {
             if (result.value) {
-                axios
-                    .delete('http://127.0.0.1:3333/api/user/'+this.id)
+                destroyNoAuth('user/'+this.id)
                     .then((response) =>{
                        // console.log(response)
-                        if(response.data.status == 'success'){
+                        if(response.status == 'success'){
                            // console.log('iso');
-                            this.getUsers();
+                            getUsers();
                         }
                         Swal(
                             'Deleted!',
@@ -135,7 +170,6 @@ class Users extends Component {
 
 
     render (){
-        const users = this.state.users;
 
         return (
             <div className="up">
@@ -160,7 +194,7 @@ class Users extends Component {
                     </form>
                 </div>
 
-                <div className="inputan">
+                <div className="inputan" style={{ marginTop:'100px' }}>
                     <br />
                         Email : {this.state.newUser.email} <br />
                         Username : {this.state.newUser.username} <br />
@@ -176,7 +210,7 @@ class Users extends Component {
                             <th></th>
                         </thead>
                         <tbody>
-                            {users.map((user,index) =>
+                            {this.props.users.map((user,index) =>
                                 <tr key={user.id}>
                                     <td>
                                         {index+1}
@@ -208,19 +242,19 @@ class Users extends Component {
                                 </button>
                             </div>
                             <div className="modal-body">
-                                <form>
+                                <form onSubmit={this.updateUser.bind(this, this.state.editUser.id)}>
                                     <div className="form-group">
                                         <label for="message-text" className="col-form-label">Email:</label>
-                                        <input type="username" name="username" value={this.state.editUser.email} onChange={this.handleInputEdit} required />
+                                        <input type="email" name="email" value={this.state.editUser.email} onChange={this.handleInputEdit} required />
                                     </div>
                                     <div className="form-group">
                                         <label for="message-text" className="col-form-label">Username:</label>
-                                        <input type="username" name="username" value={this.state.editUser.username} onChange={this.handleInputEdit} required />
+                                        <input type="text" name="username" value={this.state.editUser.username} onChange={this.handleInputEdit} required />
                                     </div>
                                 
                                     <div className="modal-footer">
                                         <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                                        <button type="submit" className="btn btn-primary">Save Change</button>
+                                        <input type="submit" className="btn btn-primary" value="Save Change"  />
                                     </div>
                                 </form>
                             </div>
@@ -233,4 +267,9 @@ class Users extends Component {
     }  
 }
 
-export default Users;
+const mapStateToProps = state => {
+    // console.log(state);
+    return {users: state.userReducer}
+}
+
+export default connect(mapStateToProps)(Users);
