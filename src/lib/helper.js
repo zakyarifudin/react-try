@@ -1,4 +1,4 @@
-import {config} from '../reducers/config';
+import {config} from './config';
 
 var auth = JSON.parse(localStorage.getItem('bearer'));
 
