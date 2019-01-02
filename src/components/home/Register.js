@@ -8,21 +8,23 @@ export default class Register extends Component {
   async register(value) {
       await postNoAuth('user', value)
             .then((response) =>{
+                console.log(response);
               if(response.status == 'success'){
                   this.props.history.push('/users');
               }
               else{
-                  Swal(
-                      'OMG!',
-                      'Something Wrong!',
-                      'warning'
-                    )
+                let error='';
+                {response.map((res,index) =>
+                    error += res.message + "<br>"
+                    )}
+                Swal(
+                    'OMG!',
+                    error,
+                    'warning'
+                )
               }
           })
-          .catch((e) => {
-              console.log(e)
-          });
-        }
+    }
 
   render() {
 

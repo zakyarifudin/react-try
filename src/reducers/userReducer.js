@@ -3,9 +3,6 @@ const userReducer = (state = [], action) => {
 		case 'GET_USERS' :
 			return state = action.data;
 
-		case 'GET_USER' :
-			return state = action.data;
-
 		default:
 			return state;
 	}

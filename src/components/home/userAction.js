@@ -1,5 +1,7 @@
-import store from '../../reducers/store';
+import store from '../../reducers/store'; 
 import {getNoAuth} from '../../lib/helper';
+
+//const {store} = configureStore();
 
 const getUsers = () => {
 

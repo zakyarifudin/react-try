@@ -7,10 +7,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min';
 import {Provider} from 'react-redux';
 import store from './reducers/store';
+import { PersistGate } from 'redux-persist/integration/react'
+
+
+//const {persistor, store} = configureStore(); 
 
 ReactDOM.render(
     <Provider store={store}>
-        <App />
+        {/* <PersistGate loading={null} persistor={persistor}> */}
+            <App />
+        {/* </PersistGate>    */}
     </Provider>
         , 
     document.getElementById('root')

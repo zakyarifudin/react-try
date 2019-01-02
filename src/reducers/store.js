@@ -1,15 +1,25 @@
-import { createStore, combineReducers } from 'redux'
-import { reducer as formReducer } from 'redux-form'
+import { createStore } from 'redux'
+import { persistStore, persistReducer } from 'redux-persist'
+import storage from 'redux-persist/lib/storage' // defaults to localStorage for web and AsyncStorage for react-native
+import hardSet from 'redux-persist/lib/stateReconciler/hardSet'
 
-// login
-import userReducer from './userReducer';
+import rootReducer from './kumpulanReducers';
 
-let kumpulanReducer = combineReducers({
-	userReducer : userReducer,
-	form : formReducer
+// const persistConfig = {
+// 	key: 'root',
+// 	storage,
+// 	blacklist: ['form', 'placeReducer', 'loginReducer'],
+// 	stateReconciler : hardSet
+// }
 
-});
+// const persistedReducer = persistReducer(persistConfig, rootReducer)
 
-let store = createStore(kumpulanReducer);
+// export default () => {
+// 	let store = createStore(persistedReducer)
+// 	let persistor = persistStore(store, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+// 	return { store, persistor }
+//   }
+
+let store = createStore(rootReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
 export default store;

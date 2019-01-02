@@ -2,7 +2,6 @@ import React, { Fragment } from "react";
 import { BrowserRouter as Router, Route, Link, Redirect,Switch } from "react-router-dom";
 import {connect} from 'react-redux';
 import store from '../../reducers/store';
-
 import history from './history';
 
 //Component
@@ -23,12 +22,11 @@ import GuestRoute from './middleware/GuestRoute';
 import IsNotLoginRoute from './middleware/IsNotLogin';
 import IsLoginRoute from './middleware/IsLogin';
 
-// const {store} = configureStore()
 
 //User detail harusnya dari API tapi disini kita coba manual
 localStorage.setItem('userDetail', JSON.stringify({role:'admin'}));
 
-//const bearer = JSON.parse(localStorage.getItem('bearer'));
+const bearer = JSON.parse(localStorage.getItem('bearer'));
 const userDetail = JSON.parse(localStorage.getItem('userDetail'));
 
 const handleLogout = (props) => {
@@ -41,14 +39,14 @@ const handleLogout = (props) => {
 }
 
 
-function BasicRoute(props) {
-  
-  return (
-    <Router>
+import React, { Component } from 'react'
+
+export default class NavBar extends Component {
+  render() {
+    return (
       <div>
-        <ul>
-        {
-          props.loginReducer.bearer!=='' ? 
+        <ul>{
+          props.loginReducer!==undefined ? 
           <Fragment>
             <li>
               <Link to="/">Home</Link>
@@ -86,24 +84,15 @@ function BasicRoute(props) {
         </ul>
 
         <hr />
-
-        <Switch>
-          <IsLoginRoute exact path="/" component={Home} />
-          <IsLoginRoute path="/about" component={About} />
-          <IsNotLoginRoute path="/login" component={Login} />
-          <IsNotLoginRoute path="/register" component={Register} />
-          <IsLoginRoute path="/users" component={Users} />
-          <IsLoginRoute path="/topics" component={Topics} />
-          <Route path="*" component={PageNotFound} />
-        </Switch>   
       </div>
-    </Router>
-  );
+    );
+  }
 }
 
 const mapStateToProps = state => {
   return {
     loginReducer: state.loginReducer,
+    bearer : state.bearer
   }
 }
 

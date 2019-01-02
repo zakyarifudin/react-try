@@ -2,8 +2,7 @@ import React, { Component } from 'react'
 import { Field, reduxForm } from 'redux-form'
 import isecured from '../../assets/icons-secured.png';
 import ilock from '../../assets/icons-lock.png';
-import validate from './registerValidation/validate';
-import asyncValidate from './registerValidation/asyncValidate'
+import validate from './loginValidation/validate';
  
 
 const inputan = ({img, input, type, placeholder, label, meta: { touched, error } }) => (
@@ -27,7 +26,7 @@ const inputan = ({img, input, type, placeholder, label, meta: { touched, error }
     
 )
 
-const RegisterForm = props => {
+const LoginForm = props => {
     const { handleSubmit, pristine, reset, submitting, invalid } = props
     //console.log(props)
     return (
@@ -38,10 +37,9 @@ const RegisterForm = props => {
                 <div className="row">
                     <div className="col-md-6 col-md-offset-3">
                         <Field name="email" component={inputan} type="email" placeholder="Email Bos" label="Email" img={isecured}/>
-                        <Field name="username" component={inputan} type="text" placeholder="Username gan" label="Username" img={isecured}/>
                         <Field name="password" component={inputan} type="password" placeholder="Password Om" label="Password" img={ilock}/>
                         <div className="form-group">
-                            <button className="btn btn-custom btn-block" type="submit" disabled={pristine || invalid}> REGISTER </button>
+                            <button className="btn btn-custom btn-block" type="submit" disabled={pristine || invalid}> LOGIN </button>
                         </div>   
                     </div>
                 </div>
@@ -52,8 +50,6 @@ const RegisterForm = props => {
 
 
 export default reduxForm({
-    form: 'register',  // a unique identifier for this form
+    form: 'login',  // a unique identifier for this form
     validate,          // <--- validation function given to redux-form
-    // asyncValidate,
-    // asyncBlurFields: ['email','username'],
-})(RegisterForm)
+})(LoginForm)

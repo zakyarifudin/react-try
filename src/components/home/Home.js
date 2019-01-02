@@ -1,33 +1,32 @@
 import React, { Component } from 'react';
-import Select from 'react-select'
+import Select from 'react-select';
+import {connect} from 'react-redux';
+import store from '../../reducers/store';
+import {getProvinces, getCities} from './homeAction';
 
 
 class Home extends Component { 
     constructor(props){
         super(props)
         this.state = {
-            fruits : [
-                { id: 1, label: 'Chocolate' },
-                { id: 2, label: 'Strawberry' },
-                { id: 3, label: 'Vanilla' }
-            ],
-            fruitSelected : '',
-
+            selectedProvince : null,
+            selectedCity: null
         }
-        this.handleChange = this.handleChange.bind(this);
-        //this.handletest = this.handletest.bind(this);
+        //this.handleChange = this.handleChange.bind(this);
+    }
+    
+
+
+    handleChangeSelectProvince(selectedProvince) {
+        this.setState({selectedProvince, selectedCity:null});
+        console.log(selectedProvince);
+        getCities(selectedProvince);
+        
     }
 
-
-    handleChange(selectedOption) {
-        console.log(selectedOption)
-        let fruit = this.refs.fruit.state.value;
-        if(fruit!=null){
-            console.log("test")
-            this.setState({ fruitSelected: this.refs.fruit.state.value.label});
-        }
-        
-        
+    handleChangeSelectCity(selectedCity) {
+        this.setState({selectedCity});
+        console.log(selectedCity);
         
     }
 
@@ -35,35 +34,42 @@ class Home extends Component {
         alert(param);
     }
 
+    componentDidMount()
+    {
+        getProvinces();
+    }
 
     render (){
-        const fruits = this.state.fruits; 
+        let provinces = this.props.provinces.map(function (province) {
+            return { value: province.id_province, label: province.province_name };
+          })
+
+        let cities = this.props.cities.map(function (city) {
+        return { value: city.id_city, label: city.city_name };
+        })
+
+        const {selectedProvince, selectedCity} = this.state
+
         return (
             <div>
-                <h2>Home {this.state.fruitSelected}</h2>
+                <h2>Home</h2>
                 <br />
-                {/* <select
-                    ref="fruit"
-                    //value={fruits.} 
-                    //options={fruits} 
-                    placeholder={'Pilih Buah buahan'}
-                    onChange={this.handleChange}
-                >
-                    
-                    {fruits.map((fruit,index) =>
-                        <option  key={fruit.id} value={fruit.id}>
-                            {fruit.label}
-                        </option>
-                    )}
-                    
-                </select> */}
+
+                <br />
                 <Select
-                    ref="fruit"
-                    //value={fruits.} 
-                    options={fruits} 
-                    placeholder={'Pilih Buah buahan'}
-                    onInputChange={this.handleChange}
+                    value={selectedProvince} 
+                    options={provinces} 
+                    placeholder={'Pilih Provinsi'}
+                    onChange={this.handleChangeSelectProvince.bind(this)}
                 />
+                <br />
+                <Select
+                    value={selectedCity} 
+                    options={cities} 
+                    placeholder={'Pilih Kota'}
+                    onChange={this.handleChangeSelectCity.bind(this)}
+                />
+
                 <Item coba="jadi" onClick={this.handletest.bind(this,"coba")} />
                 <Item coba="jadi 3" onClick={this.handletest.bind(this,"coba 2")} />
                 <Item coba="jadi 5" onClick={this.handletest.bind(this,"coba 5")} />
@@ -82,4 +88,13 @@ class Item extends Component{
     }
 } 
 
-export default Home;
+const mapStateToProps = state => {
+    // console.log(state);
+    return {
+        provinces: state.provinceReducer,
+        cities: state.cityReducer,
+    }
+}
+
+
+export default connect(mapStateToProps)(Home);

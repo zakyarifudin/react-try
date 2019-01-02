@@ -184,6 +184,44 @@ export const login = (param) => {
     });
 }
 
+export const loginJWT = param => {
+    var form = new FormData();
+    form.append("email", param.email);
+    form.append("password", param.password);
+  
+    let url = config.baseUrl + "api/jwt/login";
+  
+    return fetch(url, {
+      method: "POST",
+      headers: {
+        Accept: "application/json, application/xml, text/plain, text/html, *.*"
+      },
+      body: form
+    })
+    .then(response => {
+    if (response.ok) {
+        const contentType = response.headers.get("Content-Type") || "";
+
+        if (contentType.includes("application/json")) {
+        return response.json().catch(error => {
+            return Promise.resolve([]);
+        });
+        }
+        return Promise.resolve([]);
+    }
+
+    if (response.status > 200) {
+        sessionStorage.setItem("error", response.statusText);
+        return Promise.resolve([]);
+    }
+
+    return Promise.resolve([]);
+    })
+    .catch(error => {
+    return Promise.resolve([]);
+    });
+};
+
 export const printLayout = () => {
     const fs = window.require('fs')
     const remote = window.require('electron').remote;
